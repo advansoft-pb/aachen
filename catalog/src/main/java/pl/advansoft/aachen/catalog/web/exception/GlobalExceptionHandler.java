@@ -28,7 +28,7 @@ class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return problemDetail;
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(ProductNotFoundException.class)
     ProblemDetail handleProductNotFoundException(ProductNotFoundException ex) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
         problemDetail.setTitle("Product Not Found");

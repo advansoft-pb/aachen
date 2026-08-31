@@ -30,10 +30,16 @@ class ProductRepositoryTest {
     }
 
     @Test
-    void shouldGetProduct() {
-        ProductEntity product = productRepository.findByCode("P3");
+    void shouldGetProductByCode() {
+        ProductEntity product = productRepository.findByCode("P3").orElseThrow();
         assertThat(product.getCode()).isEqualTo("P3");
         assertThat(product.getName()).isEqualTo("The Hunger Games 3");
-        assertThat(product.getPrice()).isEqualTo(BigDecimal.valueOf(17.99d));
+        assertThat(product.getDescription()).isEqualTo("marvellous");
+        assertThat(product.getPrice()).isEqualTo(new BigDecimal("17.99"));
+    }
+
+    @Test
+    void shouldReturnEmptyWhenProductCodeNotExists() {
+        assertThat(productRepository.findByCode("invalid_product_code")).isEmpty();
     }
 }

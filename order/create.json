@@ -1,0 +1,24 @@
+{
+  "customer": {
+    "name": "Stefek",
+    "phone": "44404"
+  },
+  "deliveryAddress": {
+    "zipCode": "31566",
+    "country": "Polska"
+  },
+  "items": [
+    {
+      "name": "hej",
+      "code": "P23",
+      "price": 0.40,
+      "quantity": 4
+    },
+    {
+      "name": "dej",
+      "code": "P24",
+      "price": 12.34,
+      "quantity": 7
+    }
+  ]
+}

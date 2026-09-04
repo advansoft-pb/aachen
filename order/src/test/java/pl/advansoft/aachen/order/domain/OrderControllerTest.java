@@ -48,7 +48,7 @@ class OrderControllerTest extends AbstractIT {
 
         @Test
         void shouldReturnBadRequestWhenManadatoryDataIsMissing() {
-            String payload = TestDataFactory.createOrderRequestWithInvalidCustomer();
+            String payload = TestDataFactory.createStringOrderRequestWithInvalidCustomer();
             given()
                     .contentType(ContentType.JSON)
                     .body(payload)

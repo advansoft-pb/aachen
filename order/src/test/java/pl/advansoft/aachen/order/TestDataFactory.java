@@ -10,6 +10,29 @@ import java.util.Set;
 import static org.instancio.Select.field;
 
 public class TestDataFactory {
+    public static String createSimplePayload() {
+        return """
+                {
+                  "customer": {
+                    "name": "Stefan",
+                    "phone": "1234567890"
+                  },
+                  "deliveryAddress": {
+                    "zipCode": "12345",
+                    "country": "Polska"
+                  },
+                  "items": [
+                    {
+                      "name": "hej",
+                      "code": "P23",
+                      "price": 0.40,
+                      "quantity": 4
+                    }
+                  ]
+                }
+                """;
+    }
+
     public static String createStringOrderRequestWithInvalidCustomer() {
         return """
                 {

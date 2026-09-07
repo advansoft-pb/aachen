@@ -16,26 +16,7 @@ class OrderControllerTest extends AbstractIT {
     class CreateOrderTests {
         @Test
         void shouldCreateOrderSuccessfully() {
-            String payload = """
-                    {
-                      "customer": {
-                        "name": "Stefan",
-                        "phone": "1234567890"
-                      },
-                      "deliveryAddress": {
-                        "zipCode": "12345",
-                        "country": "Polska"
-                      },
-                      "items": [
-                        {
-                          "name": "hej",
-                          "code": "P23",
-                          "price": 0.40,
-                          "quantity": 4
-                        }
-                      ]
-                    }
-                    """;
+            String payload = TestDataFactory.createSimplePayload();
             given()
                     .contentType(ContentType.JSON)
                     .body(payload)

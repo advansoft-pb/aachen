@@ -24,8 +24,8 @@ public class TestDataFactory {
                   "items": [
                     {
                       "name": "hej",
-                      "code": "P23",
-                      "price": 0.40,
+                      "code": "P102",
+                      "price": 17.99,
                       "quantity": 4
                     }
                   ]

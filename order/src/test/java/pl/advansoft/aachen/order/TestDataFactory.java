@@ -5,12 +5,15 @@ import pl.advansoft.aachen.order.domain.models.Address;
 import pl.advansoft.aachen.order.domain.models.CreateOrderRequest;
 import pl.advansoft.aachen.order.domain.models.Customer;
 
+import java.math.BigDecimal;
 import java.util.Set;
 
 import static org.instancio.Select.field;
+import static pl.advansoft.aachen.order.AbstractIT.mockGetProductByCode;
 
 public class TestDataFactory {
     public static String createSimplePayload() {
+        mockGetProductByCode("P102", new BigDecimal("17.99"));
         return """
                 {
                   "customer": {

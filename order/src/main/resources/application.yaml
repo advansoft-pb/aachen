@@ -34,11 +34,13 @@ orders:
 
 resilience4j:
   retry:
+    retryAspectOrder: 2
     backends:
       catalog-service:
         max-attempts: 2
         wait-duration: 1s
   circuitbreaker:
+    circuitBreakerAspectOrder: 1
     backends:
       catalog-service:
         sliding-window-type: COUNT_BASED

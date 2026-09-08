@@ -28,4 +28,12 @@ class ProductController {
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> ProductNotFoundException.forCode(code));
     }
+
+    static void sleep()  {
+        try {
+            Thread.sleep(6000L);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

@@ -1,5 +1,7 @@
 package pl.advansoft.aachen.order.jobs;
 
+import net.javacrumbs.shedlock.core.LockAssert;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -20,7 +22,9 @@ class OrderEventsPublishingJob {
     }
 
     @Scheduled(cron = "${orders.publish-order-events-job-cron}")
+    @SchedulerLock(name = "publishOrderEvents")
     public void publishOrderEvents() {
+        LockAssert.assertLocked();
         LOGGER.info("Publishing Order Events at {}", Instant.now());
         orderEventService.publishOrderEvents();
     }

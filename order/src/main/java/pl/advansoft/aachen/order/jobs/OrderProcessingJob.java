@@ -1,5 +1,7 @@
 package pl.advansoft.aachen.order.jobs;
 
+import net.javacrumbs.shedlock.core.LockAssert;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -20,7 +22,9 @@ class OrderProcessingJob {
     }
 
     @Scheduled(cron = "${orders.new-orders-job-cron}")
+    @SchedulerLock(name = "processNewOrders")
     public void processNewOrders() {
+        LockAssert.assertLocked();
         LOGGER.info("Processing New Orders at {}", Instant.now());
         orderService.processNewOrders();
     }

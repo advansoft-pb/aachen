@@ -1,7 +1,5 @@
 package pl.advansoft.aachen.order.domain;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pl.advansoft.aachen.order.domain.models.OrderCreatedEvent;
 import pl.advansoft.aachen.order.domain.models.OrderEventType;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 import java.util.Objects;
@@ -37,7 +36,7 @@ public class OrderEventService {
         orderEvent.setEventType(OrderEventType.ORDER_CREATED);
         orderEvent.setOrderNumber(event.orderNumber());
         orderEvent.setCreatedAt(event.createdAt());
-        orderEvent.setPayload(toJsonPayload(event));
+        orderEvent.setPayload(objectMapper.writeValueAsString(event));
         orderEventRepository.save(orderEvent);
     }
 
@@ -55,26 +54,10 @@ public class OrderEventService {
     private void publishEvent(OrderEventEntity event) {
         OrderEventType eventType = event.getEventType();
         if (Objects.requireNonNull(eventType) == OrderEventType.ORDER_CREATED) {
-            OrderCreatedEvent orderCreatedEvent = fromJsonPayload(event.getPayload(), OrderCreatedEvent.class);
+            OrderCreatedEvent orderCreatedEvent = objectMapper.readValue(event.getPayload(), OrderCreatedEvent.class);
             orderEventPublisher.publish(orderCreatedEvent);
         } else {
             LOGGER.warn("Unsupported OrderEventType: {}", eventType);
-        }
-    }
-
-    private String toJsonPayload(Object object) {
-        try {
-            return objectMapper.writeValueAsString(object);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private <T> T fromJsonPayload(String json, Class<T> type) {
-        try {
-            return objectMapper.readValue(json, type);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
         }
     }
 }

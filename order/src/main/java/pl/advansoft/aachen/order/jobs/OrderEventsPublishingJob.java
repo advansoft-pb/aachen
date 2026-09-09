@@ -9,7 +9,7 @@ import pl.advansoft.aachen.order.domain.OrderEventService;
 import java.time.Instant;
 
 @Component
-public class OrderEventsPublishingJob {
+class OrderEventsPublishingJob {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(OrderEventsPublishingJob.class);
 

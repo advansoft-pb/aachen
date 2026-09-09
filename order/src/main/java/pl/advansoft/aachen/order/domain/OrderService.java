@@ -7,10 +7,16 @@ import org.springframework.stereotype.Service;
 import pl.advansoft.aachen.order.domain.models.CreateOrderRequest;
 import pl.advansoft.aachen.order.domain.models.CreateOrderResponse;
 import pl.advansoft.aachen.order.domain.models.OrderCreatedEvent;
+import pl.advansoft.aachen.order.domain.models.OrderStatus;
+
+import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
 public class OrderService {
+
+    private static final Set<String> DELIVERY_ALLOWED_COUNTRIES = Set.of("POLAND", "GERMANY", "UK");
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderService.class);
 
@@ -35,5 +41,36 @@ public class OrderService {
         OrderCreatedEvent orderCreatedEvent = OrderEventMapper.buildOrderCreatedEvent(savedOrder);
         orderEventService.save(orderCreatedEvent);
         return new CreateOrderResponse(savedOrder.getOrderNumber());
+    }
+
+    public void processNewOrders() {
+        List<OrderEntity> orders = orderRepository.findByStatus(OrderStatus.NEW);
+        LOGGER.info("Found {} new orders to process", orders.size());
+        for (OrderEntity order : orders) {
+            process(order);
+        }
+    }
+
+    private void process(OrderEntity order) {
+        try {
+            if (canBeDelivered(order)) {
+                LOGGER.info("OrderNumber: {} can be delivered", order.getOrderNumber());
+                orderRepository.updateOrderStatus(order.getOrderNumber(), OrderStatus.DELIVERED);
+                orderEventService.save(OrderEventMapper.buildOrderDeliveredEvent(order));
+            } else {
+                LOGGER.info("OrderNumber: {} cannot be delivered", order.getOrderNumber());
+                orderRepository.updateOrderStatus(order.getOrderNumber(), OrderStatus.CANCELLED);
+                orderEventService.save(OrderEventMapper.buildOrderCancelledEvent(order,
+                        "Can't deliver to the location"));
+            }
+        } catch (RuntimeException ex) {
+            LOGGER.error("Failed to process Order with orderNumber: {}", order.getOrderNumber(), ex);
+            orderRepository.updateOrderStatus(order.getOrderNumber(), OrderStatus.ERROR);
+            orderEventService.save(OrderEventMapper.buildOrderErrorEvent(order, ex.getMessage()));
+        }
+    }
+
+    private boolean canBeDelivered(OrderEntity order) {
+        return DELIVERY_ALLOWED_COUNTRIES.contains(order.getDeliveryAddress().country().toUpperCase());
     }
 }

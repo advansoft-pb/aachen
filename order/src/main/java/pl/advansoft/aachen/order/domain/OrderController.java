@@ -7,6 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import pl.advansoft.aachen.order.domain.models.CreateOrderRequest;
 import pl.advansoft.aachen.order.domain.models.CreateOrderResponse;
+import pl.advansoft.aachen.order.domain.models.OrderSummary;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -28,5 +31,21 @@ class OrderController {
         String userName = securityService.getLoginUserName();
         LOGGER.info("Creating order for user: {}", userName);
         return orderService.createOrder(userName, request);
+    }
+
+    @GetMapping
+    List<OrderSummary> getOrders() {
+        String userName = securityService.getLoginUserName();
+        LOGGER.info("Fetching orders for user: {}", userName);
+        return orderService.findOrders(userName);
+    }
+
+    @GetMapping("/{orderNumber}")
+    OrderDto getOrder(@PathVariable(name = "orderNumber") String orderNumber) {
+        String userName = securityService.getLoginUserName();
+        LOGGER.info("Fetching order by id: {}", orderNumber);
+        return orderService
+                .findUserOrder(userName, orderNumber)
+                .orElseThrow(() -> OrderNotFoundException.forOrderNumber(orderNumber));
     }
 }

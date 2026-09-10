@@ -7,6 +7,7 @@ import pl.advansoft.aachen.order.domain.models.OrderStatus;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 class OrderMapper {
 
@@ -37,5 +38,30 @@ class OrderMapper {
         newOrder.setItems(orderItems);
 
         return newOrder;
+    }
+
+    static OrderDto convertToDto(OrderEntity entity) {
+
+        Set<OrderItem> items = entity
+                .getItems()
+                .stream()
+                .map(item -> new OrderItem(
+                        item.getCode(),
+                        item.getName(),
+                        item.getPrice(),
+                        item.getQuantity()
+                ))
+                .collect(Collectors.toSet());
+
+        return new OrderDto(
+                entity.getOrderNumber(),
+                entity.getUserName(),
+                items,
+                entity.getCustomer(),
+                entity.getDeliveryAddress(),
+                entity.getStatus(),
+                entity.getComments(),
+                entity.getCreatedAt()
+        );
     }
 }

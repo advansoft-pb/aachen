@@ -4,12 +4,10 @@ import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import pl.advansoft.aachen.order.domain.models.CreateOrderRequest;
-import pl.advansoft.aachen.order.domain.models.CreateOrderResponse;
-import pl.advansoft.aachen.order.domain.models.OrderCreatedEvent;
-import pl.advansoft.aachen.order.domain.models.OrderStatus;
+import pl.advansoft.aachen.order.domain.models.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -30,6 +28,14 @@ public class OrderService {
         this.orderRepository = orderRepository;
         this.orderValidator = orderValidator;
         this.orderEventService = orderEventService;
+    }
+
+    public List<OrderSummary> findOrders(String userName) {
+        return orderRepository.findByUserName(userName);
+    }
+
+    public Optional<OrderDto> findUserOrder(String userName, String orderNumber) {
+        return orderRepository.findByUserNameAndOrderNumber(userName, orderNumber).map(OrderMapper::convertToDto);
     }
 
     public CreateOrderResponse createOrder(String userName, CreateOrderRequest request) {

@@ -9,6 +9,7 @@
         <groupId>pl.advansoft.aachen</groupId>
         <artifactId>parent</artifactId>
         <version>1.0.0</version>
+        <relativePath/>
     </parent>
 
     <artifactId>order</artifactId>

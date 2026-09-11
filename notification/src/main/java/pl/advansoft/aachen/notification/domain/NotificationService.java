@@ -1,16 +1,16 @@
 package pl.advansoft.aachen.notification.domain;
 
-import pl.advansoft.aachen.notification.ApplicationProperties;
-import pl.advansoft.aachen.notification.domain.models.OrderCancelledEvent;
-import pl.advansoft.aachen.notification.domain.models.OrderCreatedEvent;
-import pl.advansoft.aachen.notification.domain.models.OrderDeliveredEvent;
-import pl.advansoft.aachen.notification.domain.models.OrderErrorEvent;
 import jakarta.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import pl.advansoft.aachen.notification.ApplicationProperties;
+import pl.advansoft.aachen.notification.domain.models.OrderCancelledEvent;
+import pl.advansoft.aachen.notification.domain.models.OrderCreatedEvent;
+import pl.advansoft.aachen.notification.domain.models.OrderDeliveredEvent;
+import pl.advansoft.aachen.notification.domain.models.OrderErrorEvent;
 
 @Service
 public class NotificationService {
@@ -31,13 +31,13 @@ public class NotificationService {
                 ----------------------------------------------------
                 Dear %s,
                 Your order with orderNumber: %s has been created successfully.
-
+                
                 Thanks,
                 BookStore Team
                 ===================================================
                 """.formatted(event.customer().name(), event.orderNumber());
         log.info("\n{}", message);
-        sendEmail(event.customer().email(), "Order Created Notification", message);
+        sendEmail(properties.supportEmail(), "Order Created Notification", message);
     }
 
     public void sendOrderDeliveredNotification(OrderDeliveredEvent event) {
@@ -47,13 +47,13 @@ public class NotificationService {
                 ----------------------------------------------------
                 Dear %s,
                 Your order with orderNumber: %s has been delivered successfully.
-
+                
                 Thanks,
                 BookStore Team
                 ===================================================
                 """.formatted(event.customer().name(), event.orderNumber());
         log.info("\n{}", message);
-        sendEmail(event.customer().email(), "Order Delivered Notification", message);
+        sendEmail(properties.supportEmail(), "Order Delivered Notification", message);
     }
 
     public void sendOrderCancelledNotification(OrderCancelledEvent event) {
@@ -64,13 +64,13 @@ public class NotificationService {
                 Dear %s,
                 Your order with orderNumber: %s has been cancelled.
                 Reason: %s
-
+                
                 Thanks,
                 BookStore Team
                 ===================================================
                 """.formatted(event.customer().name(), event.orderNumber(), event.reason());
         log.info("\n{}", message);
-        sendEmail(event.customer().email(), "Order Cancelled Notification", message);
+        sendEmail(properties.supportEmail(), "Order Cancelled Notification", message);
     }
 
     public void sendOrderErrorEventNotification(OrderErrorEvent event) {
@@ -81,7 +81,7 @@ public class NotificationService {
                 Hi %s,
                 The order processing failed for orderNumber: %s.
                 Reason: %s
-
+                
                 Thanks,
                 BookStore Team
                 ===================================================

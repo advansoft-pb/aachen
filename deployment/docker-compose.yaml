@@ -18,7 +18,6 @@ services:
       resources:
         limits:
           memory: 500m
-
   catalog-service:
     image: advansoft/bookstore-catalog-service
     container_name: catalog-service
@@ -39,7 +38,6 @@ services:
           memory: 700m
     labels:
       logging: "promtail"
-
   order-db:
     image: postgres:18-alpine
     container_name: order-db
@@ -58,7 +56,6 @@ services:
       resources:
         limits:
           memory: 500m
-
   bookstore-rabbitmq:
     image: rabbitmq:3.12.11-management
     container_name: bookstore-rabbitmq
@@ -77,7 +74,6 @@ services:
       resources:
         limits:
           memory: 500m
-
   order-service:
     image: advansoft/bookstore-order-service
     container_name: order-service
@@ -99,6 +95,60 @@ services:
         condition: service_healthy
       bookstore-rabbitmq:
         condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    labels:
+      logging: "promtail"
+  notification-db:
+    image: postgres:18-alpine
+    container_name: notification-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - "35432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 500m
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    container_name: mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+  notification-service:
+    image: advansoft/bookstore-notification-service
+    container_name: notification-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - DB_URL=jdbc:postgresql://notification-db:5432/postgres
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - RABBITMQ_HOST=bookstore-rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=guest
+      - RABBITMQ_PASSWORD=guest
+      - MAIL_HOST=mailhog
+      - MAIL_PORT=1025
+    ports:
+      - "8083:8083"
+    restart: unless-stopped
+    depends_on:
+      notification-db:
+        condition: service_healthy
+      bookstore-rabbitmq:
+        condition: service_healthy
+      mailhog:
+        condition: service_started
     deploy:
       resources:
         limits:

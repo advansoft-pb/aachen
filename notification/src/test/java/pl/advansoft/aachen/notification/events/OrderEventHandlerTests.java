@@ -1,24 +1,20 @@
 package pl.advansoft.aachen.notification.events;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import pl.advansoft.aachen.notification.AbstractIT;
+import pl.advansoft.aachen.notification.ApplicationProperties;
+import pl.advansoft.aachen.notification.domain.models.*;
+
+import java.time.LocalDateTime;
+import java.util.Set;
+import java.util.UUID;
+
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
-
-import pl.advansoft.aachen.notification.AbstractIT;
-import pl.advansoft.aachen.notification.ApplicationProperties;
-import pl.advansoft.aachen.notification.domain.models.Address;
-import pl.advansoft.aachen.notification.domain.models.Customer;
-import pl.advansoft.aachen.notification.domain.models.OrderCancelledEvent;
-import pl.advansoft.aachen.notification.domain.models.OrderCreatedEvent;
-import pl.advansoft.aachen.notification.domain.models.OrderDeliveredEvent;
-import pl.advansoft.aachen.notification.domain.models.OrderErrorEvent;
-import java.time.LocalDateTime;
-import java.util.Set;
-import java.util.UUID;
-import org.junit.jupiter.api.Test;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 
 class OrderEventHandlerTests extends AbstractIT {
     @Autowired
@@ -27,8 +23,8 @@ class OrderEventHandlerTests extends AbstractIT {
     @Autowired
     ApplicationProperties properties;
 
-    Customer customer = new Customer("Siva", "siva@gmail.com", "999999999");
-    Address address = new Address("addr line 1", null, "Hyderabad", "TS", "500072", "India");
+    Customer customer = new Customer("Siva", "999999999");
+    Address address = new Address("500072", "India");
 
     @Test
     void shouldHandleOrderCreatedEvent() {

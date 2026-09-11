@@ -50,6 +50,7 @@
         <module>catalog</module>
         <module>order</module>
         <module>notification</module>
+        <module>gateway</module>
     </modules>
 
 </project>

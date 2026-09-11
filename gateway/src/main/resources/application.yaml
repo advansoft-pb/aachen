@@ -1,0 +1,11 @@
+server:
+  port: 8989
+  shutdown: graceful
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+spring:
+  application:
+    name: api-gateway

@@ -23,6 +23,7 @@ services:
     image: advansoft/bookstore-catalog-service
     container_name: catalog-service
     environment:
+      - SPRING_PROFILES_ACTIVE=docker
       - DB_URL=jdbc:postgresql://catalog-db:5432/postgres
       - DB_USERNAME=postgres
       - DB_PASSWORD=postgres
@@ -31,6 +32,72 @@ services:
     restart: unless-stopped
     depends_on:
       catalog-db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    labels:
+      logging: "promtail"
+
+  order-db:
+    image: postgres:18-alpine
+    container_name: order-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - "25432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 500m
+
+  bookstore-rabbitmq:
+    image: rabbitmq:3.12.11-management
+    container_name: bookstore-rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: rabbitmq-diagnostics check_port_connectivity
+      interval: 30s
+      timeout: 30s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          memory: 500m
+
+  order-service:
+    image: advansoft/bookstore-order-service
+    container_name: order-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - ORDERS_CATALOG_SERVICE_URL=http://catalog-service:8081
+      - DB_URL=jdbc:postgresql://order-db:5432/postgres
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - RABBITMQ_HOST=bookstore-rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=guest
+      - RABBITMQ_PASSWORD=guest
+    ports:
+      - "8082:8082"
+    restart: unless-stopped
+    depends_on:
+      orders-db:
+        condition: service_healthy
+      bookstore-rabbitmq:
         condition: service_healthy
     deploy:
       resources:

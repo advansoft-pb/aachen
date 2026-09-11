@@ -49,6 +49,7 @@
     <modules>
         <module>catalog</module>
         <module>order</module>
+        <module>notification</module>
     </modules>
 
 </project>

@@ -95,7 +95,7 @@ services:
       - "8082:8082"
     restart: unless-stopped
     depends_on:
-      orders-db:
+      order-db:
         condition: service_healthy
       bookstore-rabbitmq:
         condition: service_healthy

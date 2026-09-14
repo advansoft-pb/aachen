@@ -51,6 +51,7 @@
         <module>order</module>
         <module>notification</module>
         <module>gateway</module>
+        <module>webapp</module>
     </modules>
 
 </project>

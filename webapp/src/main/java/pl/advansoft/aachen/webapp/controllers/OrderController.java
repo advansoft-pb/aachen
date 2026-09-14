@@ -1,33 +1,23 @@
 package pl.advansoft.aachen.webapp.controllers;
 
-import pl.advansoft.aachen.webapp.clients.orders.CreateOrderRequest;
-import pl.advansoft.aachen.webapp.clients.orders.OrderConfirmationDTO;
-import pl.advansoft.aachen.webapp.clients.orders.OrderDTO;
-import pl.advansoft.aachen.webapp.clients.orders.OrderServiceClient;
-import pl.advansoft.aachen.webapp.clients.orders.OrderSummary;
-import pl.advansoft.aachen.webapp.services.SecurityHelper;
 import jakarta.validation.Valid;
-import java.util.List;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import pl.advansoft.aachen.webapp.clients.orders.*;
+
+import java.util.List;
+import java.util.Map;
 
 @Controller
 class OrderController {
     private static final Logger log = LoggerFactory.getLogger(OrderController.class);
     private final OrderServiceClient orderServiceClient;
-    private final SecurityHelper securityHelper;
 
-    OrderController(OrderServiceClient orderServiceClient, SecurityHelper securityHelper) {
+    OrderController(OrderServiceClient orderServiceClient) {
         this.orderServiceClient = orderServiceClient;
-        this.securityHelper = securityHelper;
     }
 
     @GetMapping("/cart")
@@ -39,7 +29,7 @@ class OrderController {
     @ResponseBody
     OrderConfirmationDTO createOrder(@Valid @RequestBody CreateOrderRequest orderRequest) {
         log.info("Creating order: {}", orderRequest);
-        return orderServiceClient.createOrder(getHeaders(), orderRequest);
+        return orderServiceClient.createOrder(Map.of(), orderRequest);
     }
 
     @GetMapping("/orders/{orderNumber}")
@@ -52,7 +42,7 @@ class OrderController {
     @ResponseBody
     OrderDTO getOrder(@PathVariable String orderNumber) {
         log.info("Fetching order details for orderNumber: {}", orderNumber);
-        return orderServiceClient.getOrder(getHeaders(), orderNumber);
+        return orderServiceClient.getOrder(Map.of(), orderNumber);
     }
 
     @GetMapping("/orders")
@@ -64,11 +54,6 @@ class OrderController {
     @ResponseBody
     List<OrderSummary> getOrders() {
         log.info("Fetching orders");
-        return orderServiceClient.getOrders(getHeaders());
-    }
-
-    private Map<String, ?> getHeaders() {
-        String accessToken = securityHelper.getAccessToken();
-        return Map.of("Authorization", "Bearer " + accessToken);
+        return orderServiceClient.getOrders(Map.of());
     }
 }

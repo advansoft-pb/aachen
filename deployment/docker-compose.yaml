@@ -174,3 +174,20 @@ services:
           memory: 700m
     labels:
       logging: "promtail"
+  bookstore-webapp:
+    image: advansoft/bookstore-webapp
+    container_name: bookstore-webapp
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - BOOKSTORE_API_GATEWAY_URL=http://api-gateway:8989
+      - MANAGEMENT_TRACING_EXPORT_ENABLED=${MANAGEMENT_TRACING_EXPORT_ENABLED}
+    ports:
+      - "8080:8080"
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    labels:
+      logging: "promtail"
+

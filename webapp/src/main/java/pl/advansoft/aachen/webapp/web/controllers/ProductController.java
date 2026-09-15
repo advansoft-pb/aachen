@@ -1,4 +1,4 @@
-package pl.advansoft.aachen.webapp.controllers;
+package pl.advansoft.aachen.webapp.web.controllers;
 
 import pl.advansoft.aachen.webapp.clients.catalog.CatalogServiceClient;
 import pl.advansoft.aachen.webapp.clients.catalog.PagedResult;

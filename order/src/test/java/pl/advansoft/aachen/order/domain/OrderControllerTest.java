@@ -27,6 +27,7 @@ class OrderControllerTest extends AbstractIT {
             String payload = TestDataFactory.createSimplePayload();
             given()
                     .contentType(ContentType.JSON)
+                    .header("Authorization", "Bearer " + getToken())
                     .body(payload)
                     .when()
                     .post("/api/orders")
@@ -40,6 +41,7 @@ class OrderControllerTest extends AbstractIT {
             String payload = TestDataFactory.createStringOrderRequestWithInvalidCustomer();
             given()
                     .contentType(ContentType.JSON)
+                    .header("Authorization", "Bearer " + getToken())
                     .body(payload)
                     .when()
                     .post("/api/orders")
@@ -54,6 +56,7 @@ class OrderControllerTest extends AbstractIT {
         void shouldGetOrdersSuccessfully() {
             List<OrderSummary> orderSummaries = given()
                     .when()
+                    .header("Authorization", "Bearer " + getToken())
                     .get("/api/orders")
                     .then()
                     .statusCode(HttpStatus.OK.value())
@@ -74,6 +77,7 @@ class OrderControllerTest extends AbstractIT {
         void shouldGetOrderSuccessfully() {
             given()
                     .when()
+                    .header("Authorization", "Bearer " + getToken())
                     .get("/api/orders/{orderNumber}", orderNumber)
                     .then()
                     .statusCode(HttpStatus.OK.value())

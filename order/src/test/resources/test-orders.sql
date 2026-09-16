@@ -6,8 +6,8 @@ insert into orders (id, order_number, username,
                     customer_name, customer_phone,
                     delivery_address_zip_code, delivery_address_country,
                     status, comments)
-values (1, 'order-123', 'user', 'Ala', '11111111', '75001', 'UK', 'NEW', null),
-       (2, 'order-456', 'user', 'Ola', '22222222', '50072', 'India', 'NEW', null)
+values (1, 'order-123', 'siva', 'Ala', '11111111', '75001', 'UK', 'NEW', null),
+       (2, 'order-456', 'siva', 'Ola', '22222222', '50072', 'India', 'NEW', null)
 ;
 
 insert into order_items(order_id, code, name, price, quantity)

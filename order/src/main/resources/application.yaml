@@ -1,3 +1,6 @@
+OAUTH2_SERVER_URL: http://localhost:9191
+REALM_URL: ${OAUTH2_SERVER_URL}/realms/bookstore
+
 spring:
   application:
     name: order-service
@@ -13,6 +16,11 @@ spring:
     port: ${RABBITMQ_PORT:5672}
     username: ${RABBITMQ_USERNAME:guest}
     password: ${RABBITMQ_PASSWORD:guest}
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${REALM_URL}
 server:
   port: 8082
   shutdown: graceful

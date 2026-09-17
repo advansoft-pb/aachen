@@ -9,7 +9,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -43,8 +42,6 @@ class OrderControllerUnitTest {
     private OrderService orderService;
     @MockitoBean
     private SecurityService securityService;
-    @MockitoBean
-    private HttpSecurity httpSecurity;
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -76,11 +73,13 @@ class OrderControllerUnitTest {
     }
 
     @Test
+    @WithMockUser
     void shouldReturnProperRequestWhenOrderPayloadIsValid() throws Exception {
         given(orderService.createOrder(eq(USER), any(CreateOrderRequest.class))).willReturn(new CreateOrderResponse(NUMBER));
 
         mockMvc
                 .perform(post("/api/orders")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(TestDataFactory.createOrderRequest())))
                 .andExpect(status().isCreated())

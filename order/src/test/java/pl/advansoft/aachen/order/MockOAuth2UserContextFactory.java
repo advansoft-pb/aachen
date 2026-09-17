@@ -1,6 +1,7 @@
 package pl.advansoft.aachen.order;
 
 import org.jspecify.annotations.NonNull;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -37,8 +38,8 @@ public class MockOAuth2UserContextFactory implements WithSecurityContextFactory<
 
         Map<String, Object> claims = Map.of("preferred_username", username, "userId", withUser.id(), "realm_access", authorities);
         Map<String, Object> headers = Map.of("header", "mock");
-        Jwt jwt = new Jwt("mock_jwt_token", Instant.now(), Instant.now().plusSeconds(300L), headers, claims);
-        JwtAuthenticationToken authentication = new JwtAuthenticationToken(jwt, authorities);
+        Jwt jwt = new Jwt("mock-jwt-token", Instant.now(), Instant.now().plusSeconds(300L), headers, claims);
+        Authentication authentication = new JwtAuthenticationToken(jwt, authorities);
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(authentication);
         return context;

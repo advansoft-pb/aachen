@@ -59,3 +59,5 @@ resilience4j:
         wait-duration-in-open-state: 20s
         permitted-number-of-calls-in-half-open-state: 2
         failure-rate-threshold: 50
+swagger:
+  api-gateway-url: http://localhost:8989/orders

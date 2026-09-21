@@ -102,6 +102,42 @@ services:
     volumes:
       - ./prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml
     command: "--config.file=/etc/prometheus/prometheus.yaml"
+  promtail:
+    image: grafana/promtail:3.0.0
+    container_name: promtail
+    volumes:
+      - ./promtail/promtail-docker-config.yaml:/etc/promtail/docker-config.yaml
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: "--config.file=/etc/promtail/docker-config.yaml"
+  loki:
+    image: grafana/loki:3.0.0
+    container_name: loki
+    command: "-config.file=/etc/loki/local-config.yaml"
+    ports:
+      - "3100:3100"
+    depends_on:
+      - promtail
+  tempo:
+    image: grafana/tempo:2.4.1
+    container_name: tempo
+    command: "-config.file /etc/tempo-config.yaml"
+    ports:
+      - "3200:3200"     # Tempo
+      - "9411:9411"     # Zipkin
+    volumes:
+      - ./tempo/tempo.yaml:/etc/tempo-config.yaml
+  grafana:
+    image: grafana/grafana:10.4.2
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      - GF_USERS_ALLOW_SIGN_UP=false
 
   catalog-service:
     image: advansoft/bookstore-catalog-service
@@ -112,6 +148,8 @@ services:
       - DB_USERNAME=postgres
       - DB_PASSWORD=postgres
       - SWAGGER_API_GATEWAY_URL=http://api-gateway:8989/catalog
+      - MANAGEMENT_TRACING_ENABLED=true
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://tempo:9411
     ports:
       - "8081:8081"
     restart: always
@@ -216,3 +254,5 @@ services:
     labels:
       logging: "promtail"
 
+volumes:
+  grafana_data: {}

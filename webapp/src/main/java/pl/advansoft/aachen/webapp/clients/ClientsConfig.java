@@ -1,9 +1,5 @@
 package pl.advansoft.aachen.webapp.clients;
 
-import pl.advansoft.aachen.webapp.ApplicationProperties;
-import pl.advansoft.aachen.webapp.clients.catalog.CatalogServiceClient;
-import pl.advansoft.aachen.webapp.clients.orders.OrderServiceClient;
-import java.time.Duration;
 import org.springframework.boot.http.client.ClientHttpRequestFactoryBuilder;
 import org.springframework.boot.restclient.RestClientCustomizer;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +7,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.support.RestClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
+import pl.advansoft.aachen.webapp.ApplicationProperties;
+import pl.advansoft.aachen.webapp.clients.catalog.CatalogServiceClient;
+import pl.advansoft.aachen.webapp.clients.orders.OrderServiceClient;
+
+import java.time.Duration;
 
 @Configuration
 class ClientsConfig {
@@ -34,7 +35,7 @@ class ClientsConfig {
 
     @Bean
     CatalogServiceClient catalogServiceClient(RestClient.Builder builder) {
-        RestClient restClient = builder.build();
+        RestClient restClient = builder.baseUrl(properties.apiGatewayUrl()).build();
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(RestClientAdapter.create(restClient))
                 .build();
         return factory.createClient(CatalogServiceClient.class);
@@ -42,7 +43,7 @@ class ClientsConfig {
 
     @Bean
     OrderServiceClient orderServiceClient(RestClient.Builder builder) {
-        RestClient restClient = builder.build();
+        RestClient restClient = builder.baseUrl(properties.apiGatewayUrl()).build();
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(RestClientAdapter.create(restClient))
                 .build();
         return factory.createClient(OrderServiceClient.class);

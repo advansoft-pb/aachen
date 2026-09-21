@@ -11,12 +11,12 @@ import java.time.Duration;
 @Configuration
 class CatalogServiceClientConfig {
     @Bean
-    RestClient restClient(ApplicationProperties properties) {
+    RestClient restClient(RestClient.Builder builder,
+                          ApplicationProperties properties) {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
         factory.setConnectTimeout(Duration.ofSeconds(5L));
         factory.setReadTimeout(Duration.ofSeconds(5L));
-        return RestClient
-                .builder()
+        return builder
                 .baseUrl(properties.catalogServiceUrl())
                 .requestFactory(factory)
                 .build();

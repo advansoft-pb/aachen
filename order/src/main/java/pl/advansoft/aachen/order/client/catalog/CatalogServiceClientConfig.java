@@ -11,6 +11,11 @@ import java.time.Duration;
 @Configuration
 class CatalogServiceClientConfig {
     @Bean
+    RestClient.Builder getRestClientBuilder() {
+        return RestClient.builder();
+    }
+
+    @Bean
     RestClient restClient(RestClient.Builder builder,
                           ApplicationProperties properties) {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
